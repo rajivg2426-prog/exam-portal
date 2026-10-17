@@ -71,8 +71,7 @@ class LocalExamStore extends ExamStore {
   Future<String?> read(String key) async => (await SharedPreferences.getInstance()).getString(key);
 
   @override
-  Future<void> write(String key, String value) async =>
-      (await SharedPreferences.getInstance()).setString(key, value);
+  Future<void> write(String key, String value) async => (await SharedPreferences.getInstance()).setString(key, value);
 
   @override
   Future<void> remove(String key) async => (await SharedPreferences.getInstance()).remove(key);

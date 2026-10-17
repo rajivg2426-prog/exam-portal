@@ -7,7 +7,8 @@ import '../services/paper_generator.dart';
 import 'exam_screen.dart';
 
 /// Credit shown wherever past-paper questions appear.
-const pastPaperCredit = 'Past-paper questions are from CBSE board exams, as published by CBSE '
+const pastPaperCredit =
+    'Past-paper questions are from CBSE board exams, as published by CBSE '
     'at cbse.gov.in. The solutions are written for this portal, not taken from CBSE.';
 
 /// Preview of a generated paper, with the button that starts the timed exam.
@@ -18,9 +19,11 @@ class PaperScreen extends StatelessWidget {
   final ExamStore store;
 
   void _start(BuildContext context) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (_) => ExamScreen(session: ExamSession.start(paper), store: store),
-    ));
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => ExamScreen(session: ExamSession.start(paper), store: store),
+      ),
+    );
   }
 
   @override
@@ -60,11 +63,13 @@ class PaperScreen extends StatelessWidget {
                 : ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
-                      Text('${config.board} · Class ${config.grade} · ${config.subject}',
-                          style: theme.textTheme.titleLarge),
+                      Text(
+                        '${config.board} · Class ${config.grade} · ${config.subject}',
+                        style: theme.textTheme.titleLarge,
+                      ),
                       const SizedBox(height: 4),
                       Text(
-                        '$scope · ${config.type == QuestionType.mcq ? 'MCQ' : 'Subjective'} · '
+                        '$scope · ${config.kindLabel} · '
                         '${config.difficulty == Difficulty.tough ? 'Tough' : 'Normal'}',
                       ),
                       Text('Time: ${config.duration.label} · Maximum marks: ${paper.totalMarks}'),
@@ -72,24 +77,27 @@ class PaperScreen extends StatelessWidget {
                       if (paper.hasSampleQuestions)
                         const _Notice(
                           icon: Icons.info_outline,
-                          text: 'These are sample practice questions written for this app. '
+                          text:
+                              'These are sample practice questions written for this app. '
                               'They are not from real board papers.',
                         ),
                       if (paper.hasPastPaperQuestions)
-                        const _Notice(
-                          icon: Icons.history_edu_outlined,
-                          text: pastPaperCredit,
-                        ),
+                        const _Notice(icon: Icons.history_edu_outlined, text: pastPaperCredit),
                       if (paper.isShort)
                         _Notice(
                           icon: Icons.warning_amber_outlined,
-                          text: 'The question bank has only ${paper.totalMarks} marks of matching questions, '
+                          text:
+                              'The question bank has only ${paper.totalMarks} marks of matching questions, '
                               'so this paper is shorter than a usual ${config.duration.label} paper '
                               '(${config.duration.targetMarks} marks).',
                         ),
                       const SizedBox(height: 8),
-                      for (var i = 0; i < paper.questions.length; i++)
+                      for (var i = 0; i < paper.questions.length; i++) ...[
+                        if (paper.questions[i].section != null &&
+                            (i == 0 || paper.questions[i - 1].section != paper.questions[i].section))
+                          _SectionHeader(section: paper.questions[i].section!),
                         _QuestionCard(number: i + 1, item: paper.questions[i]),
+                      ],
                     ],
                   ),
           ),
@@ -118,7 +126,9 @@ class _Notice extends StatelessWidget {
           children: [
             Icon(icon, color: scheme.onSecondaryContainer),
             const SizedBox(width: 12),
-            Expanded(child: Text(text, style: TextStyle(color: scheme.onSecondaryContainer))),
+            Expanded(
+              child: Text(text, style: TextStyle(color: scheme.onSecondaryContainer)),
+            ),
           ],
         ),
       ),
@@ -165,6 +175,31 @@ class _QuestionCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.section});
+
+  final String section;
+
+  @override
+  Widget build(BuildContext context) {
+    final info = boardSections.firstWhere((s) => s.name == section);
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Section $section', style: theme.textTheme.titleMedium),
+          Text(
+            '${info.title} · ${info.marks} ${info.marks == 1 ? 'mark' : 'marks'} '
+            '${info.caseStudy ? 'per case study' : 'each'}',
+          ),
+        ],
       ),
     );
   }

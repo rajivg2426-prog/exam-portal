@@ -41,6 +41,9 @@ void main() {
     expect(find.text('Class 10'), findsOneWidget);
     expect(find.text('Mathematics'), findsOneWidget);
 
+    // Board pattern is the default; this test uses a short custom paper.
+    await tester.tap(find.text('Custom'));
+    await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Generate paper'), 200);
     await tester.tap(find.text('Generate paper'));
     await tester.pumpAndSettle();

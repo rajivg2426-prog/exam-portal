@@ -32,13 +32,9 @@ class _ResultScreenState extends State<ResultScreen> {
     final theme = Theme.of(context);
     final c = _r.config;
     final toMark = _r.count(AnswerStatus.toMark);
-    final isMcq = c.type == QuestionType.mcq;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Results'),
-        automaticallyImplyLeading: !widget.justSubmitted,
-      ),
+      appBar: AppBar(title: const Text('Results'), automaticallyImplyLeading: !widget.justSubmitted),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -50,13 +46,17 @@ class _ResultScreenState extends State<ResultScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      _r.timeUp ? "Time's up. Your paper was submitted automatically." : 'Your paper has been submitted.',
+                      _r.timeUp
+                          ? "Time's up. Your paper was submitted automatically."
+                          : 'Your paper has been submitted.',
                       style: theme.textTheme.titleMedium,
                     ),
                   ),
                 Text('${c.board} · Class ${c.grade} · ${c.subject}', style: theme.textTheme.titleLarge),
-                Text('${c.isFullSyllabus ? 'Full syllabus' : c.chapters!.join(', ')} · '
-                    '${isMcq ? 'MCQ' : 'Subjective'} · ${c.difficulty == Difficulty.tough ? 'Tough' : 'Normal'}'),
+                Text(
+                  '${c.isFullSyllabus ? 'Full syllabus' : c.chapters!.join(', ')} · '
+                  '${c.kindLabel} · ${c.difficulty == Difficulty.tough ? 'Tough' : 'Normal'}',
+                ),
                 const SizedBox(height: 16),
                 _ScoreCard(result: _r),
                 if (toMark > 0)
@@ -79,8 +79,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 const SizedBox(height: 16),
                 Text('Review answers', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 4),
-                for (var i = 0; i < _r.length; i++)
-                  _ReviewTile(result: _r, index: i, onAward: (m) => _award(i, m)),
+                for (var i = 0; i < _r.length; i++) _ReviewTile(result: _r, index: i, onAward: (m) => _award(i, m)),
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: () => Navigator.of(context).popUntil((r) => r.isFirst),
@@ -105,7 +104,6 @@ class _ScoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final r = result;
-    final isMcq = r.config.type == QuestionType.mcq;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -128,10 +126,11 @@ class _ScoreCard extends StatelessWidget {
               spacing: 24,
               runSpacing: 8,
               children: [
-                if (isMcq) ...[
+                if (r.config.hasMcq) ...[
                   _Stat('Correct', r.count(AnswerStatus.correct)),
                   _Stat('Wrong', r.count(AnswerStatus.wrong)),
-                ] else ...[
+                ],
+                if (r.config.hasSubjective) ...[
                   _Stat('Marked', r.count(AnswerStatus.marked)),
                   _Stat('To mark', r.count(AnswerStatus.toMark)),
                 ],
@@ -178,7 +177,12 @@ class _ChapterBar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [Expanded(child: Text(chapter)), Text('$scored / $total')]),
+          Row(
+            children: [
+              Expanded(child: Text(chapter)),
+              Text('$scored / $total'),
+            ],
+          ),
           const SizedBox(height: 4),
           LinearProgressIndicator(value: total == 0 ? 0 : scored / total, minHeight: 6),
         ],
@@ -246,7 +250,9 @@ class _ReviewTile extends StatelessWidget {
                 DropdownButton<int>(
                   value: result.awarded[index],
                   hint: const Text('Choose'),
-                  items: [for (var m = 0; m <= q.marks; m++) DropdownMenuItem(value: m, child: Text('$m / ${q.marks}'))],
+                  items: [
+                    for (var m = 0; m <= q.marks; m++) DropdownMenuItem(value: m, child: Text('$m / ${q.marks}')),
+                  ],
                   onChanged: (m) => m == null ? null : onAward(m),
                 ),
               ],
@@ -293,8 +299,8 @@ class _OptionLine extends StatelessWidget {
             child: isCorrect
                 ? Icon(Icons.check, size: 20, color: green)
                 : isChosen
-                    ? Icon(Icons.close, size: 20, color: scheme.error)
-                    : null,
+                ? Icon(Icons.close, size: 20, color: scheme.error)
+                : null,
           ),
           const SizedBox(width: 8),
           Expanded(

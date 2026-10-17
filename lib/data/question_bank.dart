@@ -68,9 +68,8 @@ class QuestionBank {
   List<int> gradesFor(String board) =>
       questions.where((q) => q.board == board).map((q) => q.grade).toSet().toList()..sort();
 
-  List<String> subjectsFor(String board, int grade) => _sorted(
-        questions.where((q) => q.board == board && q.grade == grade).map((q) => q.subject),
-      );
+  List<String> subjectsFor(String board, int grade) =>
+      _sorted(questions.where((q) => q.board == board && q.grade == grade).map((q) => q.subject));
 
   /// Chapters in syllabus order; any not in the known order come last.
   List<String> chaptersFor(String board, int grade, String subject) {
@@ -89,8 +88,8 @@ class QuestionBank {
   }
 
   /// Whether any past-paper questions exist for this class and subject.
-  bool hasPastPapers(String board, int grade, String subject) => questions
-      .any((q) => q.isPastPaper && q.board == board && q.grade == grade && q.subject == subject);
+  bool hasPastPapers(String board, int grade, String subject) =>
+      questions.any((q) => q.isPastPaper && q.board == board && q.grade == grade && q.subject == subject);
 
   static List<String> _sorted(Iterable<String> values) => values.toSet().toList()..sort();
 }

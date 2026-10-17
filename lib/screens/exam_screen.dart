@@ -94,9 +94,11 @@ class _ExamScreenState extends State<ExamScreen> {
     if (!mounted) return;
     // Close any open dialog or sheet before leaving.
     Navigator.of(context).popUntil((route) => route is! PopupRoute);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (_) => ResultScreen(result: result, store: widget.store, justSubmitted: true),
-    ));
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => ResultScreen(result: result, store: widget.store, justSubmitted: true),
+      ),
+    );
   }
 
   Future<bool> _confirmLeave() async {
@@ -150,11 +152,7 @@ class _ExamScreenState extends State<ExamScreen> {
           actions: [
             _TimerChip(remaining: _remaining),
             if (!wide)
-              IconButton(
-                tooltip: 'All questions',
-                icon: const Icon(Icons.grid_view),
-                onPressed: _openNavigator,
-              ),
+              IconButton(tooltip: 'All questions', icon: const Icon(Icons.grid_view), onPressed: _openNavigator),
             const SizedBox(width: 8),
           ],
         ),
@@ -166,10 +164,7 @@ class _ExamScreenState extends State<ExamScreen> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 720),
-                    child: ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: [_buildQuestion(i)],
-                    ),
+                    child: ListView(padding: const EdgeInsets.all(16), children: [_buildQuestion(i)]),
                   ),
                 ),
               ),
@@ -230,6 +225,14 @@ class _ExamScreenState extends State<ExamScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (item.section != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Section ${item.section}',
+              style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.secondary),
+            ),
+          ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -296,7 +299,13 @@ class _TimerChip extends StatelessWidget {
       excludeSemantics: true,
       child: Chip(
         avatar: Icon(Icons.timer_outlined, size: 18, color: low ? scheme.onErrorContainer : null),
-        label: Text(text, style: TextStyle(fontFeatures: const [FontFeature.tabularFigures()], color: low ? scheme.onErrorContainer : null)),
+        label: Text(
+          text,
+          style: TextStyle(
+            fontFeatures: const [FontFeature.tabularFigures()],
+            color: low ? scheme.onErrorContainer : null,
+          ),
+        ),
         backgroundColor: low ? scheme.errorContainer : null,
       ),
     );
@@ -316,8 +325,7 @@ class _NavigatorPanel extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${session.answeredCount} of ${session.length} answered',
-            style: Theme.of(context).textTheme.titleSmall),
+        Text('${session.answeredCount} of ${session.length} answered', style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -393,8 +401,7 @@ class _NavButton extends StatelessWidget {
                 ),
               ),
             ),
-            if (flagged)
-              Positioned(top: -6, right: -6, child: Icon(Icons.flag, size: 18, color: scheme.error)),
+            if (flagged) Positioned(top: -6, right: -6, child: Icon(Icons.flag, size: 18, color: scheme.error)),
           ],
         ),
       ),
@@ -417,7 +424,11 @@ class _Legend extends StatelessWidget {
         if (icon != null)
           Icon(icon, size: 16, color: Theme.of(context).colorScheme.error)
         else
-          Container(width: 14, height: 14, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
+          Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
+          ),
         const SizedBox(width: 6),
         Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],

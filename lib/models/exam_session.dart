@@ -14,9 +14,9 @@ class ExamSession {
     Map<int, String>? written,
     Set<int>? flagged,
     this.current = 0,
-  })  : choices = choices ?? {},
-        written = written ?? {},
-        flagged = flagged ?? {};
+  }) : choices = choices ?? {},
+       written = written ?? {},
+       flagged = flagged ?? {};
 
   factory ExamSession.start(Paper paper, {DateTime? now}) {
     final start = now ?? DateTime.now();
@@ -64,18 +64,18 @@ class ExamSession {
   }
 
   Map<String, dynamic> toJson() => {
-        'config': paper.config.toJson(),
-        'questions': [
-          for (final q in paper.questions)
-            {'id': q.question.id, 'options': q.options, 'answerIndex': q.answerIndex},
-        ],
-        'startedAt': startedAt.toIso8601String(),
-        'endsAt': endsAt.toIso8601String(),
-        'choices': {for (final e in choices.entries) '${e.key}': e.value},
-        'written': {for (final e in written.entries) '${e.key}': e.value},
-        'flagged': flagged.toList(),
-        'current': current,
-      };
+    'config': paper.config.toJson(),
+    'questions': [
+      for (final q in paper.questions)
+        {'id': q.question.id, 'options': q.options, 'answerIndex': q.answerIndex, 'section': q.section},
+    ],
+    'startedAt': startedAt.toIso8601String(),
+    'endsAt': endsAt.toIso8601String(),
+    'choices': {for (final e in choices.entries) '${e.key}': e.value},
+    'written': {for (final e in written.entries) '${e.key}': e.value},
+    'flagged': flagged.toList(),
+    'current': current,
+  };
 
   /// Rebuilds a saved session. Returns null if a question it used is no
   /// longer in the bank.
@@ -85,17 +85,17 @@ class ExamSession {
     for (final raw in (json['questions'] as List).cast<Map<String, dynamic>>()) {
       final q = byId[raw['id']];
       if (q == null) return null;
-      items.add(PaperQuestion(
-        question: q,
-        options: (raw['options'] as List).cast<String>(),
-        answerIndex: raw['answerIndex'] as int?,
-      ));
+      items.add(
+        PaperQuestion(
+          question: q,
+          options: (raw['options'] as List).cast<String>(),
+          answerIndex: raw['answerIndex'] as int?,
+          section: raw['section'] as String?,
+        ),
+      );
     }
     return ExamSession(
-      paper: Paper(
-        config: PaperConfig.fromJson(json['config'] as Map<String, dynamic>),
-        questions: items,
-      ),
+      paper: Paper(config: PaperConfig.fromJson(json['config'] as Map<String, dynamic>), questions: items),
       startedAt: DateTime.parse(json['startedAt'] as String),
       endsAt: DateTime.parse(json['endsAt'] as String),
       choices: (json['choices'] as Map<String, dynamic>).map((k, v) => MapEntry(int.parse(k), v as int)),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../data/question_bank.dart';
 import '../models/exam_result.dart';
-import '../models/question.dart';
 import '../services/exam_store.dart';
 import 'result_screen.dart';
 
@@ -24,9 +23,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<List<ExamResult>> _load() => widget.store.loadResults(widget.bank.questions);
 
   Future<void> _open(ExamResult r) async {
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => ResultScreen(result: r, store: widget.store),
-    ));
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ResultScreen(result: r, store: widget.store),
+      ),
+    );
     setState(() => _results = _load()); // marks may have changed
   }
 
@@ -75,11 +76,17 @@ class _Dashboard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(child: _Tile(label: 'Papers', value: '${summary.attempts}')),
+                Expanded(
+                  child: _Tile(label: 'Papers', value: '${summary.attempts}'),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _Tile(label: 'Average', value: '${summary.averagePercent}%')),
+                Expanded(
+                  child: _Tile(label: 'Average', value: '${summary.averagePercent}%'),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _Tile(label: 'Best', value: '${summary.bestPercent}%')),
+                Expanded(
+                  child: _Tile(label: 'Best', value: '${summary.bestPercent}%'),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -97,10 +104,12 @@ class _Dashboard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(children: [
-                      Expanded(child: Text('${c.chapter} · ${c.subject}')),
-                      Text('${(c.scored * 100 / c.total).round()}%'),
-                    ]),
+                    Row(
+                      children: [
+                        Expanded(child: Text('${c.chapter} · ${c.subject}')),
+                        Text('${(c.scored * 100 / c.total).round()}%'),
+                      ],
+                    ),
                     const SizedBox(height: 4),
                     LinearProgressIndicator(value: c.scored / c.total, minHeight: 6),
                   ],
@@ -112,10 +121,14 @@ class _Dashboard extends StatelessWidget {
               Card(
                 margin: const EdgeInsets.only(top: 8),
                 child: ListTile(
-                  title: Text('${r.config.subject} · Class ${r.config.grade} · '
-                      '${r.config.type == QuestionType.mcq ? 'MCQ' : 'Subjective'}'),
-                  subtitle: Text('${_date(r.submittedAt)} · ${r.config.duration.label}'
-                      '${r.count(AnswerStatus.toMark) > 0 ? ' · needs marking' : ''}'),
+                  title: Text(
+                    '${r.config.subject} · Class ${r.config.grade} · '
+                    '${r.config.kindLabel}',
+                  ),
+                  subtitle: Text(
+                    '${_date(r.submittedAt)} · ${r.config.duration.label}'
+                    '${r.count(AnswerStatus.toMark) > 0 ? ' · needs marking' : ''}',
+                  ),
                   trailing: Text('${r.percent}%', style: theme.textTheme.titleMedium),
                   onTap: () => onOpen(r),
                 ),

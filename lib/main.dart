@@ -48,9 +48,7 @@ class _BankLoaderState extends State<_BankLoader> {
       future: _bank,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(child: Text('Could not load the question bank.\n${snapshot.error}')),
-          );
+          return Scaffold(body: Center(child: Text('Could not load the question bank.\n${snapshot.error}')));
         }
         if (!snapshot.hasData) {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));

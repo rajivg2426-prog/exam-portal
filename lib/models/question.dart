@@ -24,6 +24,7 @@ class Question {
     this.year,
     this.paper,
     this.number,
+    this.caseStudy,
     this.options = const [],
     this.answerIndex,
   });
@@ -49,6 +50,19 @@ class Question {
   final String? paper;
   final String? number;
 
+  /// Shared id for the parts of one case-study question, so a paper can
+  /// keep them together.
+  final String? caseStudy;
+
+  /// Questions with the same key are versions of one question on a board
+  /// paper (for example the two sides of an internal OR choice), so only one
+  /// of them goes on a generated paper.
+  String get originKey {
+    final base = number == null ? null : RegExp(r'^\d+').stringMatch(number!);
+    if (!isPastPaper || base == null) return id;
+    return '$board/$year/$paper/$base';
+  }
+
   /// MCQ only.
   final List<String> options;
   final int? answerIndex;
@@ -69,10 +83,7 @@ class Question {
       throw FormatException('Past-paper question ${json['id']} needs a year');
     }
     if (type == QuestionType.mcq &&
-        (options.length < 2 ||
-            answerIndex == null ||
-            answerIndex < 0 ||
-            answerIndex >= options.length)) {
+        (options.length < 2 || answerIndex == null || answerIndex < 0 || answerIndex >= options.length)) {
       throw FormatException('MCQ ${json['id']} needs options and a valid answerIndex');
     }
     return Question(
@@ -90,6 +101,7 @@ class Question {
       year: json['year'] as int?,
       paper: json['paper'] as String?,
       number: json['number'] as String?,
+      caseStudy: json['caseStudy'] as String?,
       options: options,
       answerIndex: answerIndex,
     );

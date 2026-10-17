@@ -29,6 +29,11 @@ Built with Flutter (web, Android and iOS from one codebase).
 - "Past papers only" option when creating a paper
 - Added so far: CBSE Class 10 Mathematics (Standard), Q.P. 30/1/1 for 2022 (Term 2), 2023, 2024, 2025 and 2026: 196 questions. CBSE only publishes papers from 2022 onwards on its site, so earlier years need another official source
 
+**Board-pattern papers**
+- "Board pattern" (the default) builds a new random paper in the CBSE layout every time: Section A 20 × 1 (MCQ and assertion-reason), B 5 × 2, C 6 × 3, D 4 × 5, E 3 case studies × 4 = 80 marks, 3 hours
+- Each section is filled at random from the bank; the two sides of an internal OR choice never appear together, and case studies stay whole (both 1-mark parts plus one 2-mark part)
+- Questions a student has already had on earlier papers are used last, so each new paper is as fresh as the bank allows
+
 Next phases: 3) results and analytics, 4) 10-year historical question bank, 5) practice mode, bookmarks, reattempts, printable papers and more.
 
 ## Question bank

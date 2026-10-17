@@ -81,12 +81,12 @@ class ExamResult {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'session': session.toJson(),
-        'submittedAt': submittedAt.toIso8601String(),
-        'timeUp': timeUp,
-        'awarded': {for (final e in awarded.entries) '${e.key}': e.value},
-      };
+    'id': id,
+    'session': session.toJson(),
+    'submittedAt': submittedAt.toIso8601String(),
+    'timeUp': timeUp,
+    'awarded': {for (final e in awarded.entries) '${e.key}': e.value},
+  };
 
   /// Returns null if a question the result used is no longer in the bank.
   static ExamResult? fromJson(Map<String, dynamic> json, List<Question> bank) {
