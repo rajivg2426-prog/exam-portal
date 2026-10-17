@@ -37,10 +37,12 @@ class QuestionBank {
     'assets/question_bank/cbse_hindi_a_2024_3-1-1.json',
     'assets/question_bank/cbse_hindi_a_2025_3-1-1.json',
     'assets/question_bank/cbse_hindi_a_2026_3-1-1.json',
+    'assets/question_bank/cbse12_maths_2025_65-1-1.json',
+    'assets/question_bank/cbse12_maths_2026_65-1-1.json',
   ];
 
   /// NCERT chapter order, so chapters are listed as in the textbook.
-  static const _syllabusOrder = {
+  static const _syllabusOrderX = {
     'Mathematics': [
       'Real Numbers',
       'Polynomials',
@@ -98,6 +100,24 @@ class QuestionBank {
     ],
   };
 
+  static const _syllabusOrderXII = {
+    'Mathematics': [
+      'Relations and Functions',
+      'Inverse Trigonometric Functions',
+      'Matrices',
+      'Determinants',
+      'Continuity and Differentiability',
+      'Application of Derivatives',
+      'Integrals',
+      'Application of Integrals',
+      'Differential Equations',
+      'Vector Algebra',
+      'Three Dimensional Geometry',
+      'Linear Programming',
+      'Probability',
+    ],
+  };
+
   final List<Question> questions;
 
   static Future<QuestionBank> loadFromAssets() async {
@@ -130,7 +150,7 @@ class QuestionBank {
 
   /// Chapters in syllabus order; any not in the known order come last.
   List<String> chaptersFor(String board, int grade, String subject) {
-    final order = _syllabusOrder[subject] ?? const [];
+    final order = (grade == 12 ? _syllabusOrderXII : _syllabusOrderX)[subject] ?? const [];
     int rank(String c) {
       final i = order.indexOf(c);
       return i < 0 ? order.length : i;

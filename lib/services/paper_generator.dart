@@ -113,12 +113,26 @@ const _boardLayouts = {
   ],
 };
 
-/// The board layout for [subject]; subjects without their own layout use
-/// the Mathematics one.
-List<BoardSection> boardSectionsFor(String subject) => _boardLayouts[subject] ?? _boardLayouts['Mathematics']!;
+/// CBSE Class XII board paper layouts (2024 onwards), by subject.
+const _boardLayoutsXII = {
+  'Mathematics': [
+    BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
+    BoardSection('B', 'Very short answer', 5, 2),
+    BoardSection('C', 'Short answer', 6, 3),
+    BoardSection('D', 'Long answer', 4, 5),
+    BoardSection('E', 'Case studies', 3, 4, caseStudy: true),
+  ],
+};
 
-/// Total marks of a full board-pattern paper in [subject].
-int boardMarksFor(String subject) => boardSectionsFor(subject).fold(0, (n, s) => n + s.totalMarks);
+/// The board layout for [subject] in Class [grade]; subjects without their
+/// own layout use that class's Mathematics one.
+List<BoardSection> boardSectionsFor(int grade, String subject) {
+  final layouts = grade == 12 ? _boardLayoutsXII : _boardLayouts;
+  return layouts[subject] ?? layouts['Mathematics']!;
+}
+
+/// Total marks of a full board-pattern paper in [subject] for Class [grade].
+int boardMarksFor(int grade, String subject) => boardSectionsFor(grade, subject).fold(0, (n, s) => n + s.totalMarks);
 
 class PaperConfig {
   const PaperConfig({
@@ -165,7 +179,7 @@ class PaperConfig {
   bool get isBoardPattern => pattern == PaperPattern.board;
 
   /// Marks a full paper with these settings aims for.
-  int get targetMarks => isBoardPattern ? boardMarksFor(subject) : duration.targetMarks;
+  int get targetMarks => isBoardPattern ? boardMarksFor(grade, subject) : duration.targetMarks;
 
   /// Short description of the question types, for headings.
   String get kindLabel => isBoardPattern ? 'Board pattern' : (type == QuestionType.mcq ? 'MCQ' : 'Subjective');
@@ -289,7 +303,7 @@ class PaperGenerator {
     final origins = <String>{};
     final items = <PaperQuestion>[];
 
-    for (final section in boardSectionsFor(config.subject)) {
+    for (final section in boardSectionsFor(config.grade, config.subject)) {
       if (section.caseStudy) {
         items.addAll(_pickCaseStudies(matching, section, config.difficulty));
         continue;
@@ -347,8 +361,11 @@ class PaperGenerator {
     final complete =
         groups.entries
             .where((g) {
+              // Two 1-mark parts plus a 2-mark part (with any alternatives),
+              // or two 2-mark parts.
               final ones = g.value.where((q) => q.marks == 1).length;
-              return ones == 2 && g.value.any((q) => q.marks == 2);
+              final twos = g.value.where((q) => q.marks == 2).length;
+              return (ones == 2 && twos >= 1) || (ones == 0 && twos == 2);
             })
             .map((g) => g.key)
             .toList()
@@ -363,7 +380,8 @@ class PaperGenerator {
     for (final g in complete.take(section.count)) {
       final parts = groups[g]!;
       final twos = _ordered(parts.where((q) => q.marks == 2), difficulty);
-      final chosen = {...parts.where((q) => q.marks == 1), twos.first};
+      final ones = parts.where((q) => q.marks == 1);
+      final chosen = ones.isEmpty ? twos.toSet() : {...ones, twos.first};
       for (final q in parts.where(chosen.contains)) {
         items.add(_toPaperQuestion(q, section: section.name));
       }

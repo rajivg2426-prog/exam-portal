@@ -90,4 +90,18 @@ void main() {
       }
     }
   });
+
+  test('a Class XII Mathematics board-pattern paper uses only Class XII questions and totals 80 marks', () {
+    for (var seed = 0; seed < 10; seed++) {
+      final paper = PaperGenerator(bank.questions, random: Random(seed)).generate(
+        const PaperConfig.boardPattern(board: 'CBSE', grade: 12, subject: 'Mathematics', pastPapersOnly: true),
+      );
+      expect(paper.totalMarks, 80, reason: 'seed $seed');
+      expect(paper.questions.every((q) => q.question.grade == 12), isTrue);
+      for (final group in paper.questions.where((q) => q.section == 'E').map((q) => q.question.caseStudy).toSet()) {
+        final parts = paper.questions.where((q) => q.question.caseStudy == group);
+        expect(parts.fold(0, (n, q) => n + q.question.marks), 4, reason: 'seed $seed $group');
+      }
+    }
+  });
 }

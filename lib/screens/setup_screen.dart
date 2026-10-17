@@ -199,7 +199,7 @@ class _SetupScreenState extends State<SetupScreen> {
                     onSelectionChanged: (s) => setState(() => _pattern = s.single),
                   ),
                 ),
-                if (_isBoard && _subject != null) _BoardPatternCard(subject: _subject!),
+                if (_isBoard && _subject != null) _BoardPatternCard(grade: _grade!, subject: _subject!),
                 if (!_isBoard)
                   _Section(
                     label: 'Syllabus',
@@ -301,16 +301,17 @@ class _SetupScreenState extends State<SetupScreen> {
 }
 
 class _BoardPatternCard extends StatelessWidget {
-  const _BoardPatternCard({required this.subject});
+  const _BoardPatternCard({required this.grade, required this.subject});
 
+  final int grade;
   final String subject;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final sections = boardSectionsFor(subject);
+    final sections = boardSectionsFor(grade, subject);
     final questions = sections.fold(0, (n, s) => n + s.count);
-    final marks = boardMarksFor(subject);
+    final marks = boardMarksFor(grade, subject);
     return Card(
       margin: const EdgeInsets.only(bottom: 20),
       child: Padding(

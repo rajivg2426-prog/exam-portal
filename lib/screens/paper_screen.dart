@@ -95,7 +95,7 @@ class PaperScreen extends StatelessWidget {
                       for (var i = 0; i < paper.questions.length; i++) ...[
                         if (paper.questions[i].section != null &&
                             (i == 0 || paper.questions[i - 1].section != paper.questions[i].section))
-                          _SectionHeader(subject: config.subject, section: paper.questions[i].section!),
+                          _SectionHeader(grade: config.grade, subject: config.subject, section: paper.questions[i].section!),
                         _QuestionCard(number: i + 1, item: paper.questions[i]),
                       ],
                     ],
@@ -181,14 +181,15 @@ class _QuestionCard extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.subject, required this.section});
+  const _SectionHeader({required this.grade, required this.subject, required this.section});
 
+  final int grade;
   final String subject;
   final String section;
 
   @override
   Widget build(BuildContext context) {
-    final parts = boardSectionsFor(subject).where((s) => s.name == section).toList();
+    final parts = boardSectionsFor(grade, subject).where((s) => s.name == section).toList();
     final info = parts.first;
     final marks = parts.fold(0, (n, s) => n + s.totalMarks);
     final theme = Theme.of(context);
