@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../models/exam_result.dart';
 import '../models/exam_session.dart';
 import '../models/question.dart';
 import '../services/exam_store.dart';
-import 'submitted_screen.dart';
+import 'result_screen.dart';
 
 /// The timed exam: countdown, one question at a time, a navigation panel,
 /// auto-save after every change and a confirmed submit.
@@ -87,13 +88,14 @@ class _ExamScreenState extends State<ExamScreen> {
     if (_finished) return;
     _finished = true;
     _ticker.cancel();
-    final now = widget.clock();
+    final result = ExamResult.fromSession(_s, submittedAt: widget.clock(), timeUp: timeUp);
+    await widget.store.saveResult(result);
     await widget.store.clear();
     if (!mounted) return;
     // Close any open dialog or sheet before leaving.
     Navigator.of(context).popUntil((route) => route is! PopupRoute);
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (_) => SubmittedScreen(session: _s, submittedAt: now, timeUp: timeUp),
+      builder: (_) => ResultScreen(result: result, store: widget.store, justSubmitted: true),
     ));
   }
 

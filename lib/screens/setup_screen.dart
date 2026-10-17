@@ -6,6 +6,7 @@ import '../models/question.dart';
 import '../services/exam_store.dart';
 import '../services/paper_generator.dart';
 import 'exam_screen.dart';
+import 'history_screen.dart';
 import 'paper_screen.dart';
 
 /// Lets the student pick board, class, subject, chapters, question type,
@@ -104,7 +105,18 @@ class _SetupScreenState extends State<SetupScreen> {
     final chapters = _subject == null ? <String>[] : _bank.chaptersFor(_board!, _grade!, _subject!);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create a practice paper')),
+      appBar: AppBar(
+        title: const Text('Create a practice paper'),
+        actions: [
+          IconButton(
+            tooltip: 'My results',
+            icon: const Icon(Icons.insights),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => HistoryScreen(bank: _bank, store: widget.store),
+            )),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

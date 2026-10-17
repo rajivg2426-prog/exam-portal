@@ -15,7 +15,14 @@ Built with Flutter (web, Android and iOS from one codebase).
 - Countdown timer that turns red in the last 5 minutes and submits automatically at zero
 - One question at a time with previous / next, flag for review, and a question panel showing answered, unanswered and flagged questions (bottom sheet on phones, side panel on wide screens)
 - Auto-save on the device after every change; an unfinished exam can be resumed after a refresh or closing the app (the timer keeps running)
-- Submit asks for confirmation and shows how many questions are unanswered; MCQ papers show the score straight away
+- Submit asks for confirmation and shows how many questions are unanswered
+
+**Phase 3: results and analytics (done)**
+- Results page after every paper: score and percentage, correct / wrong / skipped, time taken, marks by chapter
+- Answer review: each question with the student's answer, the correct answer and the worked solution
+- Subjective answers are marked by the student against the model solution, and the score updates
+- My results dashboard: papers taken, average and best score, chapter accuracy across all papers (chapters below 60% called out), and every past paper
+- Results are saved on the device for now; they move to the student's account once sign-in is added (premium advanced analytics will build on that)
 
 Next phases: 3) results and analytics, 4) 10-year historical question bank, 5) practice mode, bookmarks, reattempts, printable papers and more.
 
