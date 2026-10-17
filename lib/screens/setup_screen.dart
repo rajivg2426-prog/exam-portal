@@ -1,0 +1,226 @@
+import 'package:flutter/material.dart';
+
+import '../data/question_bank.dart';
+import '../models/question.dart';
+import '../services/paper_generator.dart';
+import 'paper_screen.dart';
+
+/// Lets the student pick board, class, subject, chapters, question type,
+/// difficulty and duration. Only options that exist in the bank are offered.
+class SetupScreen extends StatefulWidget {
+  const SetupScreen({super.key, required this.bank});
+
+  final QuestionBank bank;
+
+  @override
+  State<SetupScreen> createState() => _SetupScreenState();
+}
+
+class _SetupScreenState extends State<SetupScreen> {
+  String? _board;
+  int? _grade;
+  String? _subject;
+  bool _fullSyllabus = true;
+  final Set<String> _chapters = {};
+  QuestionType _type = QuestionType.mcq;
+  Difficulty _difficulty = Difficulty.normal;
+  ExamDuration _duration = ExamDuration.min30;
+
+  QuestionBank get _bank => widget.bank;
+
+  @override
+  void initState() {
+    super.initState();
+    final boards = _bank.boards;
+    if (boards.length == 1) _selectBoard(boards.single);
+  }
+
+  void _selectBoard(String? board) {
+    _board = board;
+    _grade = null;
+    _subject = null;
+    _chapters.clear();
+    final grades = board == null ? <int>[] : _bank.gradesFor(board);
+    if (grades.length == 1) _selectGrade(grades.single);
+  }
+
+  void _selectGrade(int? grade) {
+    _grade = grade;
+    _subject = null;
+    _chapters.clear();
+    final subjects = grade == null ? <String>[] : _bank.subjectsFor(_board!, grade);
+    if (subjects.length == 1) _subject = subjects.single;
+  }
+
+  bool get _canGenerate =>
+      _board != null && _grade != null && _subject != null && (_fullSyllabus || _chapters.isNotEmpty);
+
+  void _generate() {
+    final config = PaperConfig(
+      board: _board!,
+      grade: _grade!,
+      subject: _subject!,
+      chapters: _fullSyllabus ? null : Set.of(_chapters),
+      type: _type,
+      difficulty: _difficulty,
+      duration: _duration,
+    );
+    final paper = PaperGenerator(_bank.questions).generate(config);
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => PaperScreen(paper: paper)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final grades = _board == null ? <int>[] : _bank.gradesFor(_board!);
+    final subjects = _grade == null ? <String>[] : _bank.subjectsFor(_board!, _grade!);
+    final chapters = _subject == null ? <String>[] : _bank.chaptersFor(_board!, _grade!, _subject!);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Create a practice paper')),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _Section(
+                  label: 'Board',
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _board,
+                    hint: const Text('Choose board'),
+                    items: [for (final b in _bank.boards) DropdownMenuItem(value: b, child: Text(b))],
+                    onChanged: (v) => setState(() => _selectBoard(v)),
+                  ),
+                ),
+                _Section(
+                  label: 'Class',
+                  child: DropdownButtonFormField<int>(
+                    key: ValueKey('grade-$_board'),
+                    initialValue: _grade,
+                    hint: const Text('Choose class'),
+                    items: [for (final g in grades) DropdownMenuItem(value: g, child: Text('Class $g'))],
+                    onChanged: _board == null ? null : (v) => setState(() => _selectGrade(v)),
+                  ),
+                ),
+                _Section(
+                  label: 'Subject',
+                  child: DropdownButtonFormField<String>(
+                    key: ValueKey('subject-$_board-$_grade'),
+                    initialValue: _subject,
+                    hint: const Text('Choose subject'),
+                    items: [for (final s in subjects) DropdownMenuItem(value: s, child: Text(s))],
+                    onChanged: _grade == null
+                        ? null
+                        : (v) => setState(() {
+                              _subject = v;
+                              _chapters.clear();
+                            }),
+                  ),
+                ),
+                _Section(
+                  label: 'Syllabus',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment(value: true, label: Text('Full syllabus')),
+                          ButtonSegment(value: false, label: Text('Chapters')),
+                        ],
+                        selected: {_fullSyllabus},
+                        onSelectionChanged: (s) => setState(() => _fullSyllabus = s.single),
+                      ),
+                      if (!_fullSyllabus) ...[
+                        const SizedBox(height: 12),
+                        if (chapters.isEmpty) const Text('Choose a subject to see its chapters.'),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final c in chapters)
+                              FilterChip(
+                                label: Text(c),
+                                selected: _chapters.contains(c),
+                                onSelected: (on) => setState(() => on ? _chapters.add(c) : _chapters.remove(c)),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                _Section(
+                  label: 'Question type',
+                  child: SegmentedButton<QuestionType>(
+                    segments: const [
+                      ButtonSegment(value: QuestionType.mcq, label: Text('MCQ')),
+                      ButtonSegment(value: QuestionType.subjective, label: Text('Subjective')),
+                    ],
+                    selected: {_type},
+                    onSelectionChanged: (s) => setState(() => _type = s.single),
+                  ),
+                ),
+                _Section(
+                  label: 'Difficulty',
+                  child: SegmentedButton<Difficulty>(
+                    segments: const [
+                      ButtonSegment(value: Difficulty.normal, label: Text('Normal')),
+                      ButtonSegment(value: Difficulty.tough, label: Text('Tough')),
+                    ],
+                    selected: {_difficulty},
+                    onSelectionChanged: (s) => setState(() => _difficulty = s.single),
+                  ),
+                ),
+                _Section(
+                  label: 'Duration',
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final d in ExamDuration.values)
+                        ChoiceChip(
+                          label: Text(d.label),
+                          selected: _duration == d,
+                          onSelected: (_) => setState(() => _duration = d),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FilledButton.icon(
+                  onPressed: _canGenerate ? _generate : null,
+                  icon: const Icon(Icons.description_outlined),
+                  label: const Text('Generate paper'),
+                  style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.titleSmall),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+}
