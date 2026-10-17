@@ -104,4 +104,16 @@ void main() {
       }
     }
   });
+
+  test('a Class XII Physics board-pattern paper totals 70 marks with two whole case studies', () {
+    for (var seed = 0; seed < 10; seed++) {
+      final paper = PaperGenerator(bank.questions, random: Random(seed)).generate(
+        const PaperConfig.boardPattern(board: 'CBSE', grade: 12, subject: 'Physics', pastPapersOnly: true),
+      );
+      expect(paper.totalMarks, 70, reason: 'seed $seed');
+      final cases = paper.questions.where((q) => q.section == 'D').toList();
+      expect(cases.map((q) => q.question.caseStudy).toSet(), hasLength(2), reason: 'seed $seed');
+      expect(cases.fold(0, (n, q) => n + q.question.marks), 8, reason: 'seed $seed');
+    }
+  });
 }

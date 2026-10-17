@@ -41,6 +41,8 @@ class QuestionBank {
     'assets/question_bank/cbse12_maths_2024_65-1-1.json',
     'assets/question_bank/cbse12_maths_2025_65-1-1.json',
     'assets/question_bank/cbse12_maths_2026_65-1-1.json',
+    'assets/question_bank/cbse12_physics_2025_55-1-1.json',
+    'assets/question_bank/cbse12_physics_2026_55-1-1.json',
   ];
 
   /// NCERT chapter order, so chapters are listed as in the textbook.
@@ -117,6 +119,22 @@ class QuestionBank {
       'Three Dimensional Geometry',
       'Linear Programming',
       'Probability',
+    ],
+    'Physics': [
+      'Electric Charges and Fields',
+      'Electrostatic Potential and Capacitance',
+      'Current Electricity',
+      'Moving Charges and Magnetism',
+      'Magnetism and Matter',
+      'Electromagnetic Induction',
+      'Alternating Current',
+      'Electromagnetic Waves',
+      'Ray Optics and Optical Instruments',
+      'Wave Optics',
+      'Dual Nature of Radiation and Matter',
+      'Atoms',
+      'Nuclei',
+      'Semiconductor Electronics',
     ],
   };
 

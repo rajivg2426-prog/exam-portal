@@ -122,7 +122,19 @@ const _boardLayoutsXII = {
     BoardSection('D', 'Long answer', 4, 5),
     BoardSection('E', 'Case studies', 3, 4, caseStudy: true),
   ],
+  'Physics': _scienceXII,
+  'Chemistry': _scienceXII,
+  'Biology': _scienceXII,
 };
+
+/// Physics, Chemistry and Biology: 70 marks.
+const _scienceXII = [
+  BoardSection('A', 'Multiple choice and assertion-reason', 16, 1, mcq: true),
+  BoardSection('B', 'Very short answer', 5, 2),
+  BoardSection('C', 'Short answer', 7, 3),
+  BoardSection('D', 'Case studies', 2, 4, caseStudy: true),
+  BoardSection('E', 'Long answer', 3, 5),
+];
 
 /// The board layout for [subject] in Class [grade]; subjects without their
 /// own layout use that class's Mathematics one.
@@ -351,24 +363,31 @@ class PaperGenerator {
     return Paper(config: config, questions: items);
   }
 
-  /// Picks whole case studies worth [BoardSection.marks] each: both 1-mark
-  /// parts plus one of the 2-mark alternatives, in their original order.
+  /// Picks whole case studies worth [BoardSection.marks] each: one question
+  /// from every part (one side of each OR choice), in their original order.
   List<PaperQuestion> _pickCaseStudies(List<Question> matching, BoardSection section, Difficulty difficulty) {
     final groups = <String, List<Question>>{};
     for (final q in matching.where((q) => q.caseStudy != null)) {
       groups.putIfAbsent(q.caseStudy!, () => []).add(q);
     }
+
+    // One question from each part. The sides of an OR choice share a part:
+    // they are numbered like 36(iii)(a) and 36(iii)(b), or 37(c) and 37(c) OR.
+    List<Question> pickParts(List<Question> parts) {
+      final byPart = <String, List<Question>>{};
+      for (final q in parts) {
+        final part = (q.number ?? q.id)
+            .replaceFirst(RegExp(r'\s*OR$'), '')
+            .replaceFirstMapped(RegExp(r'(\([^)]+\))\([^)]+\)$'), (m) => m[1]!);
+        byPart.putIfAbsent(part, () => []).add(q);
+      }
+      final chosen = {for (final options in byPart.values) _ordered(options, difficulty).first};
+      return parts.where(chosen.contains).toList();
+    }
+
+    final picks = {for (final g in groups.entries) g.key: pickParts(g.value)};
     final complete =
-        groups.entries
-            .where((g) {
-              // Two 1-mark parts plus a 2-mark part (with any alternatives),
-              // or two 2-mark parts.
-              final ones = g.value.where((q) => q.marks == 1).length;
-              final twos = g.value.where((q) => q.marks == 2).length;
-              return (ones == 2 && twos >= 1) || (ones == 0 && twos == 2);
-            })
-            .map((g) => g.key)
-            .toList()
+        picks.entries.where((g) => g.value.fold(0, (n, q) => n + q.marks) == section.marks).map((g) => g.key).toList()
           ..shuffle(_random);
     // Unseen case studies first.
     complete.sort((a, b) {
@@ -376,17 +395,10 @@ class PaperGenerator {
       return (seen(a) ? 1 : 0).compareTo(seen(b) ? 1 : 0);
     });
 
-    final items = <PaperQuestion>[];
-    for (final g in complete.take(section.count)) {
-      final parts = groups[g]!;
-      final twos = _ordered(parts.where((q) => q.marks == 2), difficulty);
-      final ones = parts.where((q) => q.marks == 1);
-      final chosen = ones.isEmpty ? twos.toSet() : {...ones, twos.first};
-      for (final q in parts.where(chosen.contains)) {
-        items.add(_toPaperQuestion(q, section: section.name));
-      }
-    }
-    return items;
+    return [
+      for (final g in complete.take(section.count))
+        for (final q in picks[g]!) _toPaperQuestion(q, section: section.name),
+    ];
   }
 
   PaperQuestion _toPaperQuestion(Question q, {String? section}) {
