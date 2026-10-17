@@ -25,6 +25,7 @@ class Question {
     this.paper,
     this.number,
     this.caseStudy,
+    this.boardSection,
     this.options = const [],
     this.answerIndex,
   });
@@ -53,6 +54,10 @@ class Question {
   /// Shared id for the parts of one case-study question, so a paper can
   /// keep them together.
   final String? caseStudy;
+
+  /// Board-pattern section this question belongs only to (for example the
+  /// text version of the Social Science map question, section F).
+  final String? boardSection;
 
   /// Questions with the same key are versions of one question on a board
   /// paper (for example the two sides of an internal OR choice), so only one
@@ -102,6 +107,7 @@ class Question {
       paper: json['paper'] as String?,
       number: json['number'] as String?,
       caseStudy: json['caseStudy'] as String?,
+      boardSection: json['boardSection'] as String?,
       options: options,
       answerIndex: answerIndex,
     );

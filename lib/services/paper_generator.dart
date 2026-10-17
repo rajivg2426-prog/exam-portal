@@ -29,7 +29,15 @@ enum PaperPattern {
 
 /// One section of the board pattern.
 class BoardSection {
-  const BoardSection(this.name, this.title, this.count, this.marks, {this.mcq = false, this.caseStudy = false});
+  const BoardSection(
+    this.name,
+    this.title,
+    this.count,
+    this.marks, {
+    this.mcq = false,
+    this.caseStudy = false,
+    this.partMarks = const [],
+  });
 
   final String name;
   final String title;
@@ -39,6 +47,11 @@ class BoardSection {
   final int marks;
   final bool mcq;
   final bool caseStudy;
+
+  /// For a section made of tagged parts (such as map work): the marks of each
+  /// part, one question per entry, taken only from questions tagged with this
+  /// section.
+  final List<int> partMarks;
 
   int get totalMarks => count * marks;
 }
@@ -51,6 +64,14 @@ const _boardLayouts = {
     BoardSection('C', 'Short answer', 6, 3),
     BoardSection('D', 'Long answer', 4, 5),
     BoardSection('E', 'Case studies', 3, 4, caseStudy: true),
+  ],
+  'Social Science': [
+    BoardSection('A', 'Multiple choice', 20, 1, mcq: true),
+    BoardSection('B', 'Very short answer', 4, 2),
+    BoardSection('C', 'Short answer', 5, 3),
+    BoardSection('D', 'Long answer', 4, 5),
+    BoardSection('E', 'Case/source-based', 3, 4, caseStudy: true),
+    BoardSection('F', 'Map skills (text version)', 1, 5, partMarks: [2, 3]),
   ],
   'Science': [
     BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
@@ -242,9 +263,20 @@ class PaperGenerator {
         items.addAll(_pickCaseStudies(matching, section, config.difficulty));
         continue;
       }
+      if (section.partMarks.isNotEmpty) {
+        for (final m in section.partMarks) {
+          final part = _ordered(
+            matching.where((q) => q.boardSection == section.name && q.marks == m),
+            config.difficulty,
+          );
+          if (part.isNotEmpty) items.add(_toPaperQuestion(part.first, section: section.name));
+        }
+        continue;
+      }
       final candidates = matching.where(
         (q) =>
             q.caseStudy == null &&
+            q.boardSection == null &&
             q.marks == section.marks &&
             q.type == (section.mcq ? QuestionType.mcq : QuestionType.subjective),
       );

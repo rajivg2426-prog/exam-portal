@@ -197,8 +197,10 @@ class _SectionHeader extends StatelessWidget {
         children: [
           Text('Section $section', style: theme.textTheme.titleMedium),
           Text(
-            '${info.title} · ${info.marks} ${info.marks == 1 ? 'mark' : 'marks'} '
-            '${info.caseStudy ? 'per case study' : 'each'}',
+            info.partMarks.isNotEmpty
+                ? '${info.title} · ${info.partMarks.join(' + ')} marks'
+                : '${info.title} · ${info.marks} ${info.marks == 1 ? 'mark' : 'marks'} '
+                      '${info.caseStudy ? 'per case study' : 'each'}',
           ),
         ],
       ),
