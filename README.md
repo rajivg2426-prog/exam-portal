@@ -11,7 +11,13 @@ Built with Flutter (web, Android and iOS from one codebase).
 - Generator that picks matching questions up to the usual marks for the chosen duration (30 min = 12, 1 hr = 25, 2 hr = 50, 3 hr = 80), shuffles MCQ options and orders questions by marks
 - Tough papers use tough questions first and top up with normal ones; papers are flagged when the bank runs short
 
-Next phases: 2) timed exam and submission, 3) results and analytics, 4) 10-year historical question bank, 5) practice mode, bookmarks, reattempts, printable papers and more.
+**Phase 2: timed exam (done)**
+- Countdown timer that turns red in the last 5 minutes and submits automatically at zero
+- One question at a time with previous / next, flag for review, and a question panel showing answered, unanswered and flagged questions (bottom sheet on phones, side panel on wide screens)
+- Auto-save on the device after every change; an unfinished exam can be resumed after a refresh or closing the app (the timer keeps running)
+- Submit asks for confirmation and shows how many questions are unanswered; MCQ papers show the score straight away
+
+Next phases: 3) results and analytics, 4) 10-year historical question bank, 5) practice mode, bookmarks, reattempts, printable papers and more.
 
 ## Question bank
 

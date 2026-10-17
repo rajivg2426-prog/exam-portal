@@ -40,6 +40,26 @@ class PaperConfig {
   final ExamDuration duration;
 
   bool get isFullSyllabus => chapters == null;
+
+  Map<String, dynamic> toJson() => {
+        'board': board,
+        'grade': grade,
+        'subject': subject,
+        'chapters': chapters?.toList(),
+        'type': type.name,
+        'difficulty': difficulty.name,
+        'duration': duration.name,
+      };
+
+  factory PaperConfig.fromJson(Map<String, dynamic> json) => PaperConfig(
+        board: json['board'] as String,
+        grade: json['grade'] as int,
+        subject: json['subject'] as String,
+        chapters: (json['chapters'] as List?)?.cast<String>().toSet(),
+        type: QuestionType.values.byName(json['type'] as String),
+        difficulty: Difficulty.values.byName(json['difficulty'] as String),
+        duration: ExamDuration.values.byName(json['duration'] as String),
+      );
 }
 
 /// A question as it appears on one generated paper. MCQ options are shuffled

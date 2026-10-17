@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../models/exam_session.dart';
 import '../models/question.dart';
+import '../services/exam_store.dart';
 import '../services/paper_generator.dart';
+import 'exam_screen.dart';
 
-/// Shows a generated paper. The timed exam (timer, navigation, auto-save,
-/// submit) comes in phase 2.
+/// Preview of a generated paper, with the button that starts the timed exam.
 class PaperScreen extends StatelessWidget {
-  const PaperScreen({super.key, required this.paper});
+  const PaperScreen({super.key, required this.paper, required this.store});
 
   final Paper paper;
+  final ExamStore store;
+
+  void _start(BuildContext context) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (_) => ExamScreen(session: ExamSession.start(paper), store: store),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +27,19 @@ class PaperScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Your paper')),
+      bottomNavigationBar: paper.questions.isEmpty
+          ? null
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: FilledButton.icon(
+                  onPressed: () => _start(context),
+                  icon: const Icon(Icons.timer_outlined),
+                  label: Text('Start exam (${config.duration.label})'),
+                  style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                ),
+              ),
+            ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

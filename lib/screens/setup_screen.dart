@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../data/question_bank.dart';
+import '../models/exam_session.dart';
 import '../models/question.dart';
+import '../services/exam_store.dart';
 import '../services/paper_generator.dart';
+import 'exam_screen.dart';
 import 'paper_screen.dart';
 
 /// Lets the student pick board, class, subject, chapters, question type,
 /// difficulty and duration. Only options that exist in the bank are offered.
 class SetupScreen extends StatefulWidget {
-  const SetupScreen({super.key, required this.bank});
+  const SetupScreen({super.key, required this.bank, required this.store});
 
   final QuestionBank bank;
+  final ExamStore store;
 
   @override
   State<SetupScreen> createState() => _SetupScreenState();
@@ -26,6 +30,8 @@ class _SetupScreenState extends State<SetupScreen> {
   Difficulty _difficulty = Difficulty.normal;
   ExamDuration _duration = ExamDuration.min30;
 
+  ExamSession? _unfinished;
+
   QuestionBank get _bank => widget.bank;
 
   @override
@@ -33,6 +39,26 @@ class _SetupScreenState extends State<SetupScreen> {
     super.initState();
     final boards = _bank.boards;
     if (boards.length == 1) _selectBoard(boards.single);
+    _checkUnfinished();
+  }
+
+  Future<void> _checkUnfinished() async {
+    final saved = await widget.store.load(_bank.questions);
+    if (mounted) setState(() => _unfinished = saved);
+  }
+
+  Future<void> _resume() async {
+    final session = _unfinished!;
+    setState(() => _unfinished = null);
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => ExamScreen(session: session, store: widget.store),
+    ));
+    _checkUnfinished();
+  }
+
+  Future<void> _discard() async {
+    await widget.store.clear();
+    if (mounted) setState(() => _unfinished = null);
   }
 
   void _selectBoard(String? board) {
@@ -66,7 +92,9 @@ class _SetupScreenState extends State<SetupScreen> {
       duration: _duration,
     );
     final paper = PaperGenerator(_bank.questions).generate(config);
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => PaperScreen(paper: paper)));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => PaperScreen(paper: paper, store: widget.store)))
+        .then((_) => _checkUnfinished());
   }
 
   @override
@@ -84,6 +112,7 @@ class _SetupScreenState extends State<SetupScreen> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                if (_unfinished != null) _ResumeCard(onResume: _resume, onDiscard: _discard),
                 _Section(
                   label: 'Board',
                   child: DropdownButtonFormField<String>(
@@ -220,6 +249,43 @@ class _Section extends StatelessWidget {
           const SizedBox(height: 8),
           child,
         ],
+      ),
+    );
+  }
+}
+
+class _ResumeCard extends StatelessWidget {
+  const _ResumeCard({required this.onResume, required this.onDiscard});
+
+  final VoidCallback onResume;
+  final VoidCallback onDiscard;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      color: scheme.tertiaryContainer,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('You have an unfinished exam',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: scheme.onTertiaryContainer)),
+            const SizedBox(height: 4),
+            Text('Your answers were saved. The timer kept running while you were away.',
+                style: TextStyle(color: scheme.onTertiaryContainer)),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: [
+                FilledButton(onPressed: onResume, child: const Text('Resume exam')),
+                TextButton(onPressed: onDiscard, child: const Text('Discard')),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
