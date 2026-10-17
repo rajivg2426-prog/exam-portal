@@ -37,6 +37,8 @@ class QuestionBank {
     'assets/question_bank/cbse_hindi_a_2024_3-1-1.json',
     'assets/question_bank/cbse_hindi_a_2025_3-1-1.json',
     'assets/question_bank/cbse_hindi_a_2026_3-1-1.json',
+    'assets/question_bank/cbse12_maths_2023_65-1-1.json',
+    'assets/question_bank/cbse12_maths_2024_65-1-1.json',
     'assets/question_bank/cbse12_maths_2025_65-1-1.json',
     'assets/question_bank/cbse12_maths_2026_65-1-1.json',
   ];
