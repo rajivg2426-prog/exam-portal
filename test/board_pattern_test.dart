@@ -106,7 +106,7 @@ void main() {
   });
 
   test('Class XII science board-pattern papers total 70 marks with two whole case studies', () {
-    for (final subject in ['Physics', 'Chemistry']) {
+    for (final subject in ['Physics', 'Chemistry', 'Biology']) {
       for (var seed = 0; seed < 10; seed++) {
         final paper = PaperGenerator(bank.questions, random: Random(seed)).generate(
           PaperConfig.boardPattern(board: 'CBSE', grade: 12, subject: subject, pastPapersOnly: true),

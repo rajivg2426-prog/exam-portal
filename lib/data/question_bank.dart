@@ -49,6 +49,10 @@ class QuestionBank {
     'assets/question_bank/cbse12_chemistry_2024_56-1-1.json',
     'assets/question_bank/cbse12_chemistry_2025_56-1-1.json',
     'assets/question_bank/cbse12_chemistry_2026_56-1-1.json',
+    'assets/question_bank/cbse12_biology_2023_57-1-1.json',
+    'assets/question_bank/cbse12_biology_2024_57-1-1.json',
+    'assets/question_bank/cbse12_biology_2025_57-1-1.json',
+    'assets/question_bank/cbse12_biology_2026_57-1-1.json',
   ];
 
   /// NCERT chapter order, so chapters are listed as in the textbook.
@@ -153,6 +157,21 @@ class QuestionBank {
       'Aldehydes, Ketones and Carboxylic Acids',
       'Amines',
       'Biomolecules',
+    ],
+    'Biology': [
+      'Sexual Reproduction in Flowering Plants',
+      'Human Reproduction',
+      'Reproductive Health',
+      'Principles of Inheritance and Variation',
+      'Molecular Basis of Inheritance',
+      'Evolution',
+      'Human Health and Disease',
+      'Microbes in Human Welfare',
+      'Biotechnology: Principles and Processes',
+      'Biotechnology and its Applications',
+      'Organisms and Populations',
+      'Ecosystem',
+      'Biodiversity and Conservation',
     ],
   };
 
