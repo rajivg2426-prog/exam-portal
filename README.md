@@ -27,7 +27,7 @@ Built with Flutter (web, Android and iOS from one codebase).
 **Phase 4: past-paper bank (in progress)**
 - Questions from official CBSE board papers, each labelled with year, Q.P. code and question number, and credited to CBSE
 - "Past papers only" option when creating a paper
-- Added so far: CBSE Class 10 Mathematics (Standard) 2024 and 2025, Q.P. 30/1/1
+- Added so far: CBSE Class 10 Mathematics (Standard) 2024, 2025 and 2026, Q.P. 30/1/1
 
 Next phases: 3) results and analytics, 4) 10-year historical question bank, 5) practice mode, bookmarks, reattempts, printable papers and more.
 
