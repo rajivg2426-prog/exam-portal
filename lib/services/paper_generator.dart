@@ -37,6 +37,7 @@ class BoardSection {
     this.mcq = false,
     this.caseStudy = false,
     this.partMarks = const [],
+    this.tag,
   });
 
   final String name;
@@ -53,7 +54,12 @@ class BoardSection {
   /// section.
   final List<int> partMarks;
 
-  int get totalMarks => count * marks;
+  /// When set, this section takes [count] questions of [marks] each from
+  /// questions whose `boardSection` equals this tag (for example English
+  /// 'reading' passages or 'letter' writing tasks), of any question type.
+  final String? tag;
+
+  int get totalMarks => partMarks.isNotEmpty ? partMarks.fold(0, (a, b) => a + b) : count * marks;
 }
 
 /// CBSE Class X board paper layouts (2023 onwards), by subject.
@@ -72,6 +78,18 @@ const _boardLayouts = {
     BoardSection('D', 'Long answer', 4, 5),
     BoardSection('E', 'Case/source-based', 3, 4, caseStudy: true),
     BoardSection('F', 'Map skills (text version)', 1, 5, partMarks: [2, 3]),
+  ],
+  'English': [
+    BoardSection('A', 'Reading', 2, 10, tag: 'reading'),
+    BoardSection('B', 'Grammar', 10, 1, tag: 'grammar'),
+    BoardSection('C', 'Writing', 1, 5, tag: 'letter'),
+    BoardSection('C', 'Writing', 1, 5, tag: 'paragraph'),
+    BoardSection('D', 'Literature', 1, 5, tag: 'extract-prose'),
+    BoardSection('D', 'Literature', 1, 5, tag: 'extract-poetry'),
+    BoardSection('D', 'Literature', 4, 3, tag: 'lit-short'),
+    BoardSection('D', 'Literature', 2, 3, tag: 'supp-short'),
+    BoardSection('D', 'Literature', 1, 6, tag: 'lit-long'),
+    BoardSection('D', 'Literature', 1, 6, tag: 'supp-long'),
   ],
   'Science': [
     BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
@@ -261,6 +279,19 @@ class PaperGenerator {
     for (final section in boardSectionsFor(config.subject)) {
       if (section.caseStudy) {
         items.addAll(_pickCaseStudies(matching, section, config.difficulty));
+        continue;
+      }
+      if (section.tag != null) {
+        var count = 0;
+        for (final q in _ordered(
+          matching.where((q) => q.boardSection == section.tag && q.marks == section.marks),
+          config.difficulty,
+        )) {
+          if (count == section.count) break;
+          if (!origins.add(q.originKey)) continue;
+          items.add(_toPaperQuestion(q, section: section.name));
+          count++;
+        }
         continue;
       }
       if (section.partMarks.isNotEmpty) {

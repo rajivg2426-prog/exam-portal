@@ -322,11 +322,8 @@ class _BoardPatternCard extends StatelessWidget {
             const SizedBox(height: 4),
             const Text('A new random paper every time, laid out like the CBSE board exam.'),
             const SizedBox(height: 8),
-            for (final s in sections)
-              Text(
-                'Section ${s.name}: ${s.title}, ${s.count} × ${s.marks} '
-                '${s.marks == 1 ? 'mark' : 'marks'}',
-              ),
+            for (final name in {for (final s in sections) s.name})
+              Text(_sectionLine(sections.where((s) => s.name == name).toList())),
           ],
         ),
       ),
@@ -395,4 +392,12 @@ class _ResumeCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _sectionLine(List<BoardSection> parts) {
+  final first = parts.first;
+  if (parts.length > 1) {
+    return 'Section ${first.name}: ${first.title}, ${parts.fold(0, (n, s) => n + s.totalMarks)} marks';
+  }
+  return 'Section ${first.name}: ${first.title}, ${first.count} × ${first.marks} ${first.marks == 1 ? 'mark' : 'marks'}';
 }

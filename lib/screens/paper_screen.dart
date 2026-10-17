@@ -188,7 +188,9 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final info = boardSectionsFor(subject).firstWhere((s) => s.name == section);
+    final parts = boardSectionsFor(subject).where((s) => s.name == section).toList();
+    final info = parts.first;
+    final marks = parts.fold(0, (n, s) => n + s.totalMarks);
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 4),
@@ -197,7 +199,9 @@ class _SectionHeader extends StatelessWidget {
         children: [
           Text('Section $section', style: theme.textTheme.titleMedium),
           Text(
-            info.partMarks.isNotEmpty
+            parts.length > 1
+                ? '${info.title} · $marks marks'
+                : info.partMarks.isNotEmpty
                 ? '${info.title} · ${info.partMarks.join(' + ')} marks'
                 : '${info.title} · ${info.marks} ${info.marks == 1 ? 'mark' : 'marks'} '
                       '${info.caseStudy ? 'per case study' : 'each'}',
