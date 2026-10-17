@@ -105,6 +105,15 @@ void main() {
     }
   });
 
+  test('a Class XII English Core board-pattern paper totals 80 marks', () {
+    for (var seed = 0; seed < 5; seed++) {
+      final paper = PaperGenerator(bank.questions, random: Random(seed)).generate(
+        const PaperConfig.boardPattern(board: 'CBSE', grade: 12, subject: 'English Core', pastPapersOnly: true),
+      );
+      expect(paper.totalMarks, 80, reason: 'seed $seed');
+    }
+  });
+
   test('Class XII science board-pattern papers total 70 marks with two whole case studies', () {
     for (final subject in ['Physics', 'Chemistry', 'Biology']) {
       for (var seed = 0; seed < 10; seed++) {

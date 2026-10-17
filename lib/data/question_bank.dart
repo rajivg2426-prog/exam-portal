@@ -53,6 +53,8 @@ class QuestionBank {
     'assets/question_bank/cbse12_biology_2024_57-1-1.json',
     'assets/question_bank/cbse12_biology_2025_57-1-1.json',
     'assets/question_bank/cbse12_biology_2026_57-1-1.json',
+    'assets/question_bank/cbse12_english_core_2025_1-1-1.json',
+    'assets/question_bank/cbse12_english_core_2026_1-1-1.json',
   ];
 
   /// NCERT chapter order, so chapters are listed as in the textbook.

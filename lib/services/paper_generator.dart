@@ -125,6 +125,21 @@ const _boardLayoutsXII = {
   'Physics': _scienceXII,
   'Chemistry': _scienceXII,
   'Biology': _scienceXII,
+  'English Core': [
+    BoardSection('A', 'Reading', 1, 12, tag: 'reading'),
+    BoardSection('A', 'Reading', 1, 10, tag: 'case'),
+    BoardSection('B', 'Creative writing', 1, 4, tag: 'notice'),
+    BoardSection('B', 'Creative writing', 1, 4, tag: 'invitation'),
+    BoardSection('B', 'Creative writing', 1, 5, tag: 'letter'),
+    BoardSection('B', 'Creative writing', 1, 5, tag: 'article'),
+    BoardSection('C', 'Literature', 1, 6, tag: 'extract-poetry'),
+    BoardSection('C', 'Literature', 1, 4, tag: 'extract-vistas'),
+    BoardSection('C', 'Literature', 1, 6, tag: 'extract-prose'),
+    BoardSection('C', 'Literature', 5, 2, tag: 'lit-short'),
+    BoardSection('C', 'Literature', 2, 2, tag: 'supp-short'),
+    BoardSection('C', 'Literature', 1, 5, tag: 'lit-long'),
+    BoardSection('C', 'Literature', 1, 5, tag: 'supp-long'),
+  ],
 };
 
 /// Physics, Chemistry and Biology: 70 marks.
