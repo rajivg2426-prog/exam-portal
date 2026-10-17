@@ -30,6 +30,7 @@ class QuestionBank {
     'assets/question_bank/cbse_science_2025_31-1-1.json',
     'assets/question_bank/cbse_science_2026_31-1-1.json',
     'assets/question_bank/cbse_english_2023_2-1-1.json',
+    'assets/question_bank/cbse_english_2024_2-1-1.json',
     'assets/question_bank/cbse_english_2025_2-1-1.json',
   ];
 
