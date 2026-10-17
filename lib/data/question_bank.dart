@@ -45,6 +45,8 @@ class QuestionBank {
     'assets/question_bank/cbse12_physics_2024_55-1-1.json',
     'assets/question_bank/cbse12_physics_2025_55-1-1.json',
     'assets/question_bank/cbse12_physics_2026_55-1-1.json',
+    'assets/question_bank/cbse12_chemistry_2023_56-1-1.json',
+    'assets/question_bank/cbse12_chemistry_2024_56-1-1.json',
     'assets/question_bank/cbse12_chemistry_2025_56-1-1.json',
     'assets/question_bank/cbse12_chemistry_2026_56-1-1.json',
   ];
