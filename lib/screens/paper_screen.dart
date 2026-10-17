@@ -89,13 +89,13 @@ class PaperScreen extends StatelessWidget {
                           text:
                               'The question bank has only ${paper.totalMarks} marks of matching questions, '
                               'so this paper is shorter than a usual ${config.duration.label} paper '
-                              '(${config.duration.targetMarks} marks).',
+                              '(${config.targetMarks} marks).',
                         ),
                       const SizedBox(height: 8),
                       for (var i = 0; i < paper.questions.length; i++) ...[
                         if (paper.questions[i].section != null &&
                             (i == 0 || paper.questions[i - 1].section != paper.questions[i].section))
-                          _SectionHeader(section: paper.questions[i].section!),
+                          _SectionHeader(subject: config.subject, section: paper.questions[i].section!),
                         _QuestionCard(number: i + 1, item: paper.questions[i]),
                       ],
                     ],
@@ -181,13 +181,14 @@ class _QuestionCard extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.section});
+  const _SectionHeader({required this.subject, required this.section});
 
+  final String subject;
   final String section;
 
   @override
   Widget build(BuildContext context) {
-    final info = boardSections.firstWhere((s) => s.name == section);
+    final info = boardSectionsFor(subject).firstWhere((s) => s.name == section);
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 4),

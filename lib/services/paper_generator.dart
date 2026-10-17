@@ -43,14 +43,30 @@ class BoardSection {
   int get totalMarks => count * marks;
 }
 
-/// CBSE Class X board paper layout (2023 onwards).
-const boardSections = [
-  BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
-  BoardSection('B', 'Very short answer', 5, 2),
-  BoardSection('C', 'Short answer', 6, 3),
-  BoardSection('D', 'Long answer', 4, 5),
-  BoardSection('E', 'Case studies', 3, 4, caseStudy: true),
-];
+/// CBSE Class X board paper layouts (2023 onwards), by subject.
+const _boardLayouts = {
+  'Mathematics': [
+    BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
+    BoardSection('B', 'Very short answer', 5, 2),
+    BoardSection('C', 'Short answer', 6, 3),
+    BoardSection('D', 'Long answer', 4, 5),
+    BoardSection('E', 'Case studies', 3, 4, caseStudy: true),
+  ],
+  'Science': [
+    BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
+    BoardSection('B', 'Very short answer', 6, 2),
+    BoardSection('C', 'Short answer', 7, 3),
+    BoardSection('D', 'Long answer', 3, 5),
+    BoardSection('E', 'Case studies', 3, 4, caseStudy: true),
+  ],
+};
+
+/// The board layout for [subject]; subjects without their own layout use
+/// the Mathematics one.
+List<BoardSection> boardSectionsFor(String subject) => _boardLayouts[subject] ?? _boardLayouts['Mathematics']!;
+
+/// Total marks of a full board-pattern paper in [subject].
+int boardMarksFor(String subject) => boardSectionsFor(subject).fold(0, (n, s) => n + s.totalMarks);
 
 class PaperConfig {
   const PaperConfig({
@@ -95,6 +111,9 @@ class PaperConfig {
 
   bool get isFullSyllabus => chapters == null;
   bool get isBoardPattern => pattern == PaperPattern.board;
+
+  /// Marks a full paper with these settings aims for.
+  int get targetMarks => isBoardPattern ? boardMarksFor(subject) : duration.targetMarks;
 
   /// Short description of the question types, for headings.
   String get kindLabel => isBoardPattern ? 'Board pattern' : (type == QuestionType.mcq ? 'MCQ' : 'Subjective');
@@ -151,7 +170,7 @@ class Paper {
 
   /// True when the bank didn't have enough matching questions to reach the
   /// usual marks for this duration.
-  bool get isShort => totalMarks < config.duration.targetMarks;
+  bool get isShort => totalMarks < config.targetMarks;
 
   bool get hasSampleQuestions => questions.any((q) => q.question.isSample);
   bool get hasPastPaperQuestions => questions.any((q) => q.question.isPastPaper);
@@ -218,7 +237,7 @@ class PaperGenerator {
     final origins = <String>{};
     final items = <PaperQuestion>[];
 
-    for (final section in boardSections) {
+    for (final section in boardSectionsFor(config.subject)) {
       if (section.caseStudy) {
         items.addAll(_pickCaseStudies(matching, section, config.difficulty));
         continue;

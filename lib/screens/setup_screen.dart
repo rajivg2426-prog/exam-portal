@@ -199,7 +199,7 @@ class _SetupScreenState extends State<SetupScreen> {
                     onSelectionChanged: (s) => setState(() => _pattern = s.single),
                   ),
                 ),
-                if (_isBoard) const _BoardPatternCard(),
+                if (_isBoard && _subject != null) _BoardPatternCard(subject: _subject!),
                 if (!_isBoard)
                   _Section(
                     label: 'Syllabus',
@@ -301,13 +301,16 @@ class _SetupScreenState extends State<SetupScreen> {
 }
 
 class _BoardPatternCard extends StatelessWidget {
-  const _BoardPatternCard();
+  const _BoardPatternCard({required this.subject});
+
+  final String subject;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final questions = boardSections.fold(0, (n, s) => n + s.count);
-    final marks = boardSections.fold(0, (n, s) => n + s.totalMarks);
+    final sections = boardSectionsFor(subject);
+    final questions = sections.fold(0, (n, s) => n + s.count);
+    final marks = boardMarksFor(subject);
     return Card(
       margin: const EdgeInsets.only(bottom: 20),
       child: Padding(
@@ -319,7 +322,7 @@ class _BoardPatternCard extends StatelessWidget {
             const SizedBox(height: 4),
             const Text('A new random paper every time, laid out like the CBSE board exam.'),
             const SizedBox(height: 8),
-            for (final s in boardSections)
+            for (final s in sections)
               Text(
                 'Section ${s.name}: ${s.title}, ${s.count} × ${s.marks} '
                 '${s.marks == 1 ? 'mark' : 'marks'}',
