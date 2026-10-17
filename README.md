@@ -27,7 +27,7 @@ Built with Flutter (web, Android and iOS from one codebase).
 **Phase 4: past-paper bank (in progress)**
 - Questions from official CBSE board papers, each labelled with year, Q.P. code and question number, and credited to CBSE
 - "Past papers only" option when creating a paper
-- Added so far: CBSE Class 10 Mathematics (Standard), Q.P. 30/1/1 for 2022 (Term 2), 2023, 2024, 2025 and 2026: 196 questions. CBSE only publishes papers from 2022 onwards on its site, so earlier years need another official source
+- Added so far (set 1 of each year, 2022 Term 2 to 2026): CBSE Class 10 Mathematics (Standard) and Science. CBSE only publishes papers from 2022 onwards on its site, so earlier years need another official source
 
 **Board-pattern papers**
 - "Board pattern" (the default) builds a new random paper in the CBSE layout every time: Section A 20 × 1 (MCQ and assertion-reason), B 5 × 2, C 6 × 3, D 4 × 5, E 3 case studies × 4 = 80 marks, 3 hours

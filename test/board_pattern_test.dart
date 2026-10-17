@@ -65,4 +65,17 @@ void main() {
     expect(restored.paper.questions.first.section, 'A');
     expect(restored.paper.questions.last.section, 'E');
   });
+
+  test('a Science board-pattern paper follows its own layout and totals 80 marks', () {
+    for (var seed = 0; seed < 10; seed++) {
+      final paper = PaperGenerator(bank.questions, random: Random(seed)).generate(
+        const PaperConfig.boardPattern(board: 'CBSE', grade: 10, subject: 'Science', pastPapersOnly: true),
+      );
+      int count(String s) => paper.questions.where((q) => q.section == s).length;
+      expect([count('A'), count('B'), count('C'), count('D')], [20, 6, 7, 3], reason: 'seed $seed');
+      expect(paper.questions.where((q) => q.section == 'E').fold(0, (n, q) => n + q.question.marks), 12);
+      expect(paper.totalMarks, 80, reason: 'seed $seed');
+      expect(paper.questions.every((q) => q.question.subject == 'Science'), isTrue);
+    }
+  });
 }
