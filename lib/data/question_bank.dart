@@ -21,6 +21,7 @@ class QuestionBank {
     'assets/question_bank/cbse_2026_30-1-1.json',
     'assets/question_bank/cbse_science_2024_31-1-1.json',
     'assets/question_bank/cbse_science_2025_31-1-1.json',
+    'assets/question_bank/cbse_science_2026_31-1-1.json',
   ];
 
   /// NCERT chapter order, so chapters are listed as in the textbook.
