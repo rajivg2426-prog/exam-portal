@@ -78,4 +78,16 @@ void main() {
       expect(paper.questions.every((q) => q.question.subject == 'Science'), isTrue);
     }
   });
+
+  test('English and Hindi A board-pattern papers total 80 marks', () {
+    for (final subject in ['English', 'Hindi A']) {
+      for (var seed = 0; seed < 5; seed++) {
+        final paper = PaperGenerator(bank.questions, random: Random(seed)).generate(
+          PaperConfig.boardPattern(board: 'CBSE', grade: 10, subject: subject, pastPapersOnly: true),
+        );
+        expect(paper.totalMarks, 80, reason: '$subject seed $seed');
+        expect(paper.questions.every((q) => q.question.subject == subject), isTrue);
+      }
+    }
+  });
 }

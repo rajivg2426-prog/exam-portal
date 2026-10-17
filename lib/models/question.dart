@@ -64,7 +64,8 @@ class Question {
   /// of them goes on a generated paper.
   String get originKey {
     final base = number == null ? null : RegExp(r'^\d+').stringMatch(number!);
-    if (!isPastPaper || base == null) return id;
+    // Grammar items share a question number but are separate tasks.
+    if (!isPastPaper || base == null || boardSection == 'grammar') return id;
     return '$board/$year/$paper/$base';
   }
 

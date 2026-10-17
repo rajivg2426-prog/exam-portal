@@ -91,6 +91,19 @@ const _boardLayouts = {
     BoardSection('D', 'Literature', 1, 6, tag: 'lit-long'),
     BoardSection('D', 'Literature', 1, 6, tag: 'supp-long'),
   ],
+  'Hindi A': [
+    BoardSection('क', 'अपठित बोध', 2, 7, tag: 'reading'),
+    BoardSection('ख', 'व्यावहारिक व्याकरण', 16, 1, tag: 'grammar'),
+    BoardSection('ग', 'पाठ्य-पुस्तक एवं पूरक पाठ्य-पुस्तक', 1, 5, tag: 'extract-prose'),
+    BoardSection('ग', 'पाठ्य-पुस्तक एवं पूरक पाठ्य-पुस्तक', 3, 2, tag: 'lit-short'),
+    BoardSection('ग', 'पाठ्य-पुस्तक एवं पूरक पाठ्य-पुस्तक', 1, 5, tag: 'extract-poetry'),
+    BoardSection('ग', 'पाठ्य-पुस्तक एवं पूरक पाठ्य-पुस्तक', 3, 2, tag: 'poem-short'),
+    BoardSection('ग', 'पाठ्य-पुस्तक एवं पूरक पाठ्य-पुस्तक', 2, 4, tag: 'supp-long'),
+    BoardSection('घ', 'रचनात्मक लेखन', 1, 6, tag: 'paragraph'),
+    BoardSection('घ', 'रचनात्मक लेखन', 1, 5, tag: 'letter'),
+    BoardSection('घ', 'रचनात्मक लेखन', 1, 5, tag: 'format'),
+    BoardSection('घ', 'रचनात्मक लेखन', 1, 4, tag: 'message'),
+  ],
   'Science': [
     BoardSection('A', 'Multiple choice and assertion-reason', 20, 1, mcq: true),
     BoardSection('B', 'Very short answer', 6, 2),
@@ -288,7 +301,9 @@ class PaperGenerator {
           config.difficulty,
         )) {
           if (count == section.count) break;
-          if (!origins.add(q.originKey)) continue;
+          // Tagged sections hold separate tasks (e.g. 'answer any three of four'), so
+          // they are not de-duplicated by question number.
+
           items.add(_toPaperQuestion(q, section: section.name));
           count++;
         }
