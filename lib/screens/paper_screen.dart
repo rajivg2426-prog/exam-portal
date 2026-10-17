@@ -6,6 +6,10 @@ import '../services/exam_store.dart';
 import '../services/paper_generator.dart';
 import 'exam_screen.dart';
 
+/// Credit shown wherever past-paper questions appear.
+const pastPaperCredit = 'Past-paper questions are from CBSE board exams, as published by CBSE '
+    'at cbse.gov.in. The solutions are written for this portal, not taken from CBSE.';
+
 /// Preview of a generated paper, with the button that starts the timed exam.
 class PaperScreen extends StatelessWidget {
   const PaperScreen({super.key, required this.paper, required this.store});
@@ -70,6 +74,11 @@ class PaperScreen extends StatelessWidget {
                           icon: Icons.info_outline,
                           text: 'These are sample practice questions written for this app. '
                               'They are not from real board papers.',
+                        ),
+                      if (paper.hasPastPaperQuestions)
+                        const _Notice(
+                          icon: Icons.history_edu_outlined,
+                          text: pastPaperCredit,
                         ),
                       if (paper.isShort)
                         _Notice(
@@ -142,6 +151,10 @@ class _QuestionCard extends StatelessWidget {
                 Text('[${q.marks}]', semanticsLabel: '${q.marks} marks', style: theme.textTheme.labelLarge),
               ],
             ),
+            if (q.isPastPaper) ...[
+              const SizedBox(height: 4),
+              Text(q.sourceLabel, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.primary)),
+            ],
             if (item.options.isNotEmpty) ...[
               const SizedBox(height: 8),
               for (var i = 0; i < item.options.length; i++)

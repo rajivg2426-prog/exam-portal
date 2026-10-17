@@ -30,6 +30,7 @@ class _SetupScreenState extends State<SetupScreen> {
   QuestionType _type = QuestionType.mcq;
   Difficulty _difficulty = Difficulty.normal;
   ExamDuration _duration = ExamDuration.min30;
+  bool _pastPapersOnly = false;
 
   ExamSession? _unfinished;
 
@@ -91,6 +92,7 @@ class _SetupScreenState extends State<SetupScreen> {
       type: _type,
       difficulty: _difficulty,
       duration: _duration,
+      pastPapersOnly: _pastPapersOnly && _bank.hasPastPapers(_board!, _grade!, _subject!),
     );
     final paper = PaperGenerator(_bank.questions).generate(config);
     Navigator.of(context)
@@ -191,6 +193,18 @@ class _SetupScreenState extends State<SetupScreen> {
                     ],
                   ),
                 ),
+                if (_subject != null && _bank.hasPastPapers(_board!, _grade!, _subject!))
+                  _Section(
+                    label: 'Questions from',
+                    child: SegmentedButton<bool>(
+                      segments: const [
+                        ButtonSegment(value: false, label: Text('All')),
+                        ButtonSegment(value: true, label: Text('Past papers only')),
+                      ],
+                      selected: {_pastPapersOnly},
+                      onSelectionChanged: (s) => setState(() => _pastPapersOnly = s.single),
+                    ),
+                  ),
                 _Section(
                   label: 'Question type',
                   child: SegmentedButton<QuestionType>(

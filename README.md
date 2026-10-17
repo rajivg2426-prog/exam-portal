@@ -24,11 +24,16 @@ Built with Flutter (web, Android and iOS from one codebase).
 - My results dashboard: papers taken, average and best score, chapter accuracy across all papers (chapters below 60% called out), and every past paper
 - Results are saved on the device for now; they move to the student's account once sign-in is added (premium advanced analytics will build on that)
 
+**Phase 4: past-paper bank (in progress)**
+- Questions from official CBSE board papers, each labelled with year, Q.P. code and question number, and credited to CBSE
+- "Past papers only" option when creating a paper
+- Added so far: CBSE Class 10 Mathematics (Standard) 2025, Q.P. 30/1/1
+
 Next phases: 3) results and analytics, 4) 10-year historical question bank, 5) practice mode, bookmarks, reattempts, printable papers and more.
 
 ## Question bank
 
-`assets/question_bank/sample_questions.json` holds 36 **sample** questions (CBSE Class 10 Mathematics: Real Numbers, Polynomials, Quadratic Equations), written for testing. They are tagged `"source": "sample"` with no year, and the app labels them as not coming from real board papers. Real past-paper questions will carry `"source": "past_paper"` and their `year`, and will be edited through the admin panel.
+`assets/question_bank/sample_questions.json` holds 36 **sample** questions (CBSE Class 10 Mathematics: Real Numbers, Polynomials, Quadratic Equations), written for testing. They are tagged `"source": "sample"` with no year, and the app labels them as not coming from real board papers. Past-paper questions come from the official papers CBSE publishes at cbse.gov.in and carry `"source": "past_paper"`, `year`, `paper` (Q.P. code) and `number`. Questions that need a figure or graph are left out for now. Solutions are written for this portal, not copied from CBSE marking schemes. Each bank file is listed in `QuestionBank.assetPaths`.
 
 Each question is tagged with `board`, `grade`, `subject`, `chapter`, `type` (`mcq` / `subjective`), `difficulty` (`normal` / `tough`), `marks`, and optionally `year`.
 

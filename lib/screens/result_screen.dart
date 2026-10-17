@@ -213,6 +213,11 @@ class _ReviewTile extends StatelessWidget {
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(q.text, style: theme.textTheme.bodyLarge),
+          if (q.isPastPaper)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(q.sourceLabel, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.primary)),
+            ),
           const SizedBox(height: 12),
           if (q.type == QuestionType.mcq)
             for (var o = 0; o < item.options.length; o++)

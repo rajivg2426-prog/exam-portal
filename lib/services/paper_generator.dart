@@ -27,6 +27,7 @@ class PaperConfig {
     required this.difficulty,
     required this.duration,
     this.chapters,
+    this.pastPapersOnly = false,
   });
 
   final String board;
@@ -39,6 +40,9 @@ class PaperConfig {
   final Difficulty difficulty;
   final ExamDuration duration;
 
+  /// Use only questions from real board papers, no sample questions.
+  final bool pastPapersOnly;
+
   bool get isFullSyllabus => chapters == null;
 
   Map<String, dynamic> toJson() => {
@@ -49,6 +53,7 @@ class PaperConfig {
         'type': type.name,
         'difficulty': difficulty.name,
         'duration': duration.name,
+        'pastPapersOnly': pastPapersOnly,
       };
 
   factory PaperConfig.fromJson(Map<String, dynamic> json) => PaperConfig(
@@ -59,6 +64,7 @@ class PaperConfig {
         type: QuestionType.values.byName(json['type'] as String),
         difficulty: Difficulty.values.byName(json['difficulty'] as String),
         duration: ExamDuration.values.byName(json['duration'] as String),
+        pastPapersOnly: json['pastPapersOnly'] as bool? ?? false,
       );
 }
 
@@ -85,6 +91,7 @@ class Paper {
   bool get isShort => totalMarks < config.duration.targetMarks;
 
   bool get hasSampleQuestions => questions.any((q) => q.question.isSample);
+  bool get hasPastPaperQuestions => questions.any((q) => q.question.isPastPaper);
 }
 
 class PaperGenerator {
@@ -103,6 +110,7 @@ class PaperGenerator {
         q.grade == config.grade &&
         q.subject == config.subject &&
         q.type == config.type &&
+        (!config.pastPapersOnly || q.isPastPaper) &&
         (config.chapters == null || config.chapters!.contains(q.chapter)));
 
     final tough = matching.where((q) => q.difficulty == Difficulty.tough).toList()..shuffle(_random);

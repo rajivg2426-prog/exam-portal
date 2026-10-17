@@ -238,6 +238,10 @@ class _ExamScreenState extends State<ExamScreen> {
             Text('[${q.marks}]', semanticsLabel: '${q.marks} marks', style: theme.textTheme.labelLarge),
           ],
         ),
+        if (q.isPastPaper) ...[
+          const SizedBox(height: 4),
+          Text(q.sourceLabel, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.primary)),
+        ],
         const SizedBox(height: 16),
         if (q.type == QuestionType.mcq)
           RadioGroup<int>(
