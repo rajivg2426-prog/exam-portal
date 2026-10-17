@@ -45,6 +45,8 @@ class QuestionBank {
     'assets/question_bank/cbse12_physics_2024_55-1-1.json',
     'assets/question_bank/cbse12_physics_2025_55-1-1.json',
     'assets/question_bank/cbse12_physics_2026_55-1-1.json',
+    'assets/question_bank/cbse12_chemistry_2025_56-1-1.json',
+    'assets/question_bank/cbse12_chemistry_2026_56-1-1.json',
   ];
 
   /// NCERT chapter order, so chapters are listed as in the textbook.
@@ -137,6 +139,18 @@ class QuestionBank {
       'Atoms',
       'Nuclei',
       'Semiconductor Electronics',
+    ],
+    'Chemistry': [
+      'Solutions',
+      'Electrochemistry',
+      'Chemical Kinetics',
+      'The d- and f-Block Elements',
+      'Coordination Compounds',
+      'Haloalkanes and Haloarenes',
+      'Alcohols, Phenols and Ethers',
+      'Aldehydes, Ketones and Carboxylic Acids',
+      'Amines',
+      'Biomolecules',
     ],
   };
 
